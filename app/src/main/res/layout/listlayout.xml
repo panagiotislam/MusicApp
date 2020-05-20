@@ -6,15 +6,17 @@
     android:layout_height="?android:attr/listPreferredItemHeight"
     android:padding="6dip" >
 
-        <TextView
-            android:id="@+id/firstLine"
-            android:layout_width="fill_parent"
+        <Button
+            android:id="@+id/lines"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:layout_alignWithParentIfMissing="true"
-            android:gravity="center_vertical"
+            android:gravity="center_horizontal"
             android:textSize="16sp"
             tools:ignore="MissingConstraints" />
+
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>

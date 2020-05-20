@@ -39,10 +39,13 @@ public class MainActivity extends AppCompatActivity {
         artistNames.setAdapter(myadapter);
 
 
+
+
         requestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                songText.setText("Hey stoopid.");
+                songText.setText("Please enter song name.");
+                requestButton.setText(" Press to continue");
             }
         });
     }

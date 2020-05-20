@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,7 +41,9 @@ public class Adapter extends BaseAdapter {
 
         convertView = LayoutInflater.from(context).inflate(R.layout.listlayout, parent, false);
 
+         TextView txt = (TextView) convertView.findViewById(R.id.lines);
 
+        txt.setText(list.get(position));
 
         return convertView;
     }
