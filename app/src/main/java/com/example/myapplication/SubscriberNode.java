@@ -37,9 +37,6 @@ public class SubscriberNode  {
 
         this.host = host;
         this.port = port;
-
-
-
     }
 
 
@@ -54,7 +51,7 @@ public class SubscriberNode  {
 
             pull();
             try {
-                Thread.sleep(5000);
+                Thread.sleep(1500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

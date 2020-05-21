@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
             String input = params[0];
 
-            SubscriberNode subscriberNode = new SubscriberNode(SUB_ID, input, BROKER_IP, 8000);
+            SubscriberNode subscriberNode = new SubscriberNode(SUB_ID, input, BROKER_IP, 7999 + Hash.getBroker(input.split("-")[0]));
             subscriberNode.connect();
 
             return subscriberNode.getV();

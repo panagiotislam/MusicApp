@@ -6,6 +6,8 @@
     android:layout_height="?android:attr/listPreferredItemHeight"
     android:padding="6dip" >
 
+
+
         <Button
             android:id="@+id/lines"
             android:layout_width="match_parent"
