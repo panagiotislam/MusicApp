@@ -13,7 +13,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:layout_alignWithParentIfMissing="true"
-            android:gravity="center_horizontal"
+            android:gravity="clip_horizontal"
             android:textSize="16sp"
             tools:ignore="MissingConstraints" />
 

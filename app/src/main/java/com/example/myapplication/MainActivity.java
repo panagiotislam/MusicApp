@@ -1,5 +1,7 @@
 package com.example.myapplication;
 
+import com.example.myapplication.impl.*;
+
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -11,18 +13,15 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.myapplication.impl.Hash;
-
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
 public class MainActivity extends AppCompatActivity {
 
     Button requestButton;
     TextView songText;
     ListView artistNames;
-    List<String> names = Arrays.asList("Alexander Nakarada", "Anonymous for Good Reasons", "Arthur Fordsworthy", "Brett Van Donsel", "Brian Boyko", "Brian Boyko", "dogsounds", "James Anderson",
+    List<String> names = Arrays.asList("Alexander Nakarada", "Anonymous for Good Reasons", "Arthur Fordsworthy", "Brett Van Donsel", "Brian Boyko", "dogsounds", "James Anderson",
             "Jason Shaw", "Kevin MacLeod", "Komiku", "Orchestralis", "Phase Shift", "Rafael Krux", "Severed Personality", "statusq", "Unknown");
 
 
@@ -38,22 +37,23 @@ public class MainActivity extends AppCompatActivity {
         Adapter myadapter = new Adapter(this, names);
         artistNames.setAdapter(myadapter);
 
-
-
-
         requestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 songText.setText("Please enter song name.");
                 requestButton.setText(" Press to continue");
+                MyTask asyncTask = new MyTask();
+                asyncTask.execute("Kevin MacLeod-Pickled Pink");
             }
         });
+
+
     }
 
 
-    private class MyTask extends AsyncTask<String, Integer, String> {
+    private class MyTask extends AsyncTask<String, Integer, Value> {
 
-        private final static String BROKER_IP = "127.0.0.1";
+        private final static String BROKER_IP = "10.0.2.2";
         private final static int SUB_ID = 1;
 
         // Runs in UI before background thread is called
@@ -67,28 +67,14 @@ public class MainActivity extends AppCompatActivity {
         // This is run in a background thread
         @RequiresApi(api = Build.VERSION_CODES.O)
         @Override
-        protected String doInBackground(String... params) {
-            // get the string from params, which is an array
-            String myString = params[0];
+        protected Value doInBackground(String... params) {
 
-            // Do something that takes a long time, for example:
-            String input = "empty";
-            Scanner in = new Scanner(System.in);
-            System.out.print("Enter ArtistName-SongName: ");
-            input = in.nextLine();
+            String input = params[0];
 
-            if (input.equalsIgnoreCase("exit")) {
-                System.out.println("Thank you for using our app!");
-            }
+            SubscriberNode subscriberNode = new SubscriberNode(SUB_ID, input, BROKER_IP, 8000);
+            subscriberNode.connect();
 
-            if (input != "empty" && input != " " && input != null) {
-                SubscriberNode subscriberNode = new SubscriberNode(SUB_ID, input, BROKER_IP, 7999 + Hash.getBroker(input.split("-")[0]));
-                subscriberNode.connect();
-            } else {
-                System.out.println("Sorry!This is not a valid track" + input);
-            }
-
-            return "this string is passed to onPostExecute";
+            return subscriberNode.getV();
         }
 
         // This is called from background thread but runs in UI
@@ -101,9 +87,9 @@ public class MainActivity extends AppCompatActivity {
 
         // This runs in UI when background thread finishes
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(Value result) {
             super.onPostExecute(result);
-
+            songText.setText(result.getMusicFile().getAlbumInfo() + " " + result.getMusicFile().getGenre());
             // Do things like hide the progress bar or change a TextView
         }
     }

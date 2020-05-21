@@ -11,11 +11,6 @@ import com.example.myapplication.impl.*;
 
 import org.apache.commons.codec.binary.Base64;
 
-import java.nio.file.DirectoryNotEmptyException;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
@@ -32,8 +27,9 @@ public class SubscriberNode  {
     private String host;
 
     private List<Value> consumedMessages;
-    private byte[] musictest = new byte[' '];
     private PrintWriter outputStream;
+
+    private Value v;
 
     public SubscriberNode(int subscriberId, String input, String host, int port) {
         this.subscriberId = subscriberId;
@@ -41,6 +37,7 @@ public class SubscriberNode  {
 
         this.host = host;
         this.port = port;
+
 
 
     }
@@ -66,7 +63,6 @@ public class SubscriberNode  {
         } catch (IOException e) {
             e.printStackTrace();
         }finally {
-            deleteFile();
             disconnect();
         }
     }
@@ -90,10 +86,8 @@ public class SubscriberNode  {
        String receivedMessages ;
         try {
             if ((receivedMessages = inputStream.readLine()) != null) {
-                Value v = parseIncomingMessage(receivedMessages.split(" Value: ")[1]);
+                v = parseIncomingMessage(receivedMessages.split(" Value: ")[1]);
                 //consumedMessages.add(v);
-                musictest = v.getMusicFile().getMusicFileExtract();
-                writeByte(musictest);
                 try {
                     Thread.sleep(1500);
                 } catch (InterruptedException e) {
@@ -121,47 +115,10 @@ public class SubscriberNode  {
 
     }
 
-
-
-    static void writeByte(byte[] bytes){
-    String FILEPATH = ( "C:\\Users\\Dragon\\Desktop\\ERGASIA\\"  + "chunks.mp3");
-    File file = new File(FILEPATH);
-
-        try {
-            OutputStream os = new FileOutputStream(file);
-
-            os.write(bytes);
-            System.out.println("Successfully"
-                    + " byte inserted");
-
-            os.close();
-        }
-
-        catch (Exception e) {
-            System.out.println("Exception: " + e);
-        }
+    public Value getV() {
+        return v;
     }
 
-    static void deleteFile(){
-        try
-        {
-            Files.deleteIfExists(Paths.get("C:\\Users\\Dragon\\Desktop\\ERGASIA\\chunks.mp3"));
-        }
-        catch(NoSuchFileException e)
-        {
-            System.out.println("No such file/directory exists");
-        }
-        catch(DirectoryNotEmptyException e)
-        {
-            System.out.println("Directory is not empty.");
-        }
-        catch(IOException e)
-        {
-            System.out.println("Invalid permissions.");
-        }
-
-        System.out.println("Deletion successful.");
-    }
 }
 
 
