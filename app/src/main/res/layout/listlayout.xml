@@ -1,24 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
-    android:layout_height="?android:attr/listPreferredItemHeight"
-    android:padding="6dip" >
+    android:layout_height="wrap_content"
+    android:padding="3dp"
+    >
 
 
 
-        <Button
+        <TextView
             android:id="@+id/lines"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:layout_alignWithParentIfMissing="true"
-            android:gravity="clip_horizontal"
+            android:gravity="center"
+            android:fontFamily="sans-serif-condensed-medium"
+            android:textStyle="italic"
             android:textSize="16sp"
-            tools:ignore="MissingConstraints" />
+            android:background="@drawable/rounded_button"
+            tools:ignore="MissingConstraints"
+            android:padding="5dp"
+            />
 
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </RelativeLayout>

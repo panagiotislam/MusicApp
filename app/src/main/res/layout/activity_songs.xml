@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,25 +9,24 @@
     tools:context=".MainActivity">
 
 
-
     <TextView
-        android:id="@+id/songText"
+        android:id="@+id/selectSongTxt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"
-        android:text="Welcome to the music app!\nPlease select artist."
+        android:text="Please select song."
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints"
-        android:gravity="center_horizontal" />
+        android:gravity="center_horizontal"
 
+        />
 
     <ListView
-        android:id="@+id/artistView"
+        android:id="@+id/songListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/songText"
+        android:layout_below="@+id/selectSongTxt"
         android:layout_marginTop="10dp"
-        tools:ignore="MissingConstraints,UnknownId" />
-
+        />
 
 </RelativeLayout>

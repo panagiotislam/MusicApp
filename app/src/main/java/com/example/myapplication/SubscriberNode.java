@@ -8,13 +8,12 @@ import java.io.*;
 import java.net.Socket;
 import com.example.myapplication.impl.*;
 
-
-import org.apache.commons.codec.binary.Base64;
-
+import java.util.ArrayList;
+import android.util.Base64;
 import java.util.List;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
-public class SubscriberNode  {
+public class SubscriberNode {
 
     private int subscriberId;
 
@@ -26,10 +25,10 @@ public class SubscriberNode  {
     private int port;
     private String host;
 
-    private List<Value> consumedMessages;
+    private List<Value> consumedMessages = new ArrayList<Value>();
+    private byte[] musictest = new byte[' '];
     private PrintWriter outputStream;
-
-    private Value v;
+    private Value s;
 
     public SubscriberNode(int subscriberId, String input, String host, int port) {
         this.subscriberId = subscriberId;
@@ -37,6 +36,8 @@ public class SubscriberNode  {
 
         this.host = host;
         this.port = port;
+
+
     }
 
 
@@ -46,20 +47,14 @@ public class SubscriberNode  {
             this.clientSocket = new Socket(host, port);
             this.outputStream = new PrintWriter(clientSocket.getOutputStream(), true);
 
-            this.inputStream =new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            registerToBroker(input, subscriberId+"");
+            this.inputStream = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            registerToBroker(input, subscriberId + "");
 
             pull();
-            try {
-                Thread.sleep(1500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            System.out.println("waking");
 
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             disconnect();
         }
     }
@@ -80,11 +75,14 @@ public class SubscriberNode  {
     }
 
     public void pull() {
-       String receivedMessages ;
+        String receivedMessages;
+        String p = "";
         try {
-            if ((receivedMessages = inputStream.readLine()) != null) {
-                v = parseIncomingMessage(receivedMessages.split(" Value: ")[1]);
-                //consumedMessages.add(v);
+            while ((receivedMessages = inputStream.readLine()) != null) {
+                Value v = parseIncomingMessage(receivedMessages.split(" Value: ")[1]);
+                consumedMessages.add(v);
+                p = v.getMusicFile().getMusicFileExtract();
+                musictest = Base64.decode(p, 0);//not used for now, works right
                 try {
                     Thread.sleep(1500);
                 } catch (InterruptedException e) {
@@ -92,7 +90,7 @@ public class SubscriberNode  {
                 }
             }
             System.out.println("[Subscriber " + subscriberId + "] Finished Consuming messages for topic: '" + input + "'.");
-       } catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -102,20 +100,25 @@ public class SubscriberNode  {
 
         String[] split = input_1.split(",");
         String trackName = split[0].split("='")[1].replace("'", "");
-        String artistName=split[1].split("='")[1].replace("'", "");
-        String albumInfo=split[2].split("='")[1].replace("'", "");
-        String genre=split[3].split("='")[1].replace("'", "");
-        System.out.println((split[4]).split("=")[1].toString().replace("[","").replace("}",""));
-        byte[] musicFileExtract = Base64.encodeBase64Chunked((split[4]).split("=")[1].getBytes());
-        MusicFile music=new MusicFile(trackName,artistName,albumInfo,genre,musicFileExtract);
+        String artistName = split[1].split("='")[1].replace("'", "");
+        String albumInfo = split[2].split("='")[1].replace("'", "");
+        String genre = split[3].split("='")[1].replace("'", "");
+        System.out.println((split[4]).split("=")[1].toString().replace("[", "").replace("}", ""));
+        String musicFileExtract = (split[4]).split("=")[1];
+        MusicFile music = new MusicFile(trackName, artistName, albumInfo, genre, musicFileExtract);
         return new Value(music);
 
     }
 
     public Value getV() {
-        return v;
+        try {
+            return consumedMessages.get(0);
+        } catch (NullPointerException n) {
+            n.printStackTrace();
+        }
+        return consumedMessages.get(0);
     }
-
 }
+
 
 

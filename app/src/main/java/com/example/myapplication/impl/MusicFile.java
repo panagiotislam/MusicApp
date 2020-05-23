@@ -1,5 +1,4 @@
 package com.example.myapplication.impl;
-
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
@@ -7,7 +6,8 @@ import androidx.annotation.RequiresApi;
 import com.mpatric.mp3agic.*;
 
 import java.io.*;
-import java.util.Arrays;
+
+import java.util.Base64;
 
 
 public class MusicFile  {
@@ -17,7 +17,7 @@ public class MusicFile  {
         private String artistName;
         private String albumInfo;
         private String genre;
-        private byte[] musicFileExtract = new byte[' '];
+        private String musicFileExtract;
 
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         public MusicFile(File file, int k) throws InvalidDataException, IOException, UnsupportedTagException {
@@ -38,7 +38,7 @@ public class MusicFile  {
             this.musicFileExtract = Chunks(file, trackName);
         }
 
-    public MusicFile(String trackName,String artistName,String albumInfo,String genre, byte[] musicFileExtract ){
+    public MusicFile(String trackName,String artistName,String albumInfo,String genre, String musicFileExtract ){
 
         this.trackName=trackName;
         this.artistName=artistName;
@@ -78,17 +78,17 @@ public class MusicFile  {
             this.genre = newGenre;
         }
 
-        public byte[] getMusicFileExtract() {
+        public String getMusicFileExtract() {
             return musicFileExtract;
         }
 
-        public void setMusicFileExtract(byte[] newMusicFileExtract) {
+        public void setMusicFileExtract(String newMusicFileExtract) {
             this.musicFileExtract = newMusicFileExtract;
         }
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public byte[] Chunks(File file, String Name){
+    public String Chunks(File file, String Name){
             int partCounterName = 1;//Name parts from 001, 002, 003, ...
 
             int sizeOfChunks = 512 * 1024;// 512KB
@@ -111,7 +111,8 @@ public class MusicFile  {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return buffer;
+            String encoded = Base64.getEncoder().encodeToString(buffer);
+            return encoded;
         }
 
     @Override
