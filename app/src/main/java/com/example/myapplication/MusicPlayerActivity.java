@@ -1,4 +1,4 @@
-package com.example.myapplication.impl;
+package com.example.myapplication;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,15 +7,14 @@ import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.example.myapplication.R;
-import com.example.myapplication.SubscriberNode;
+import com.example.myapplication.impl.Hash;
+import com.example.myapplication.impl.Value;
 
 public class MusicPlayerActivity extends AppCompatActivity {
 
@@ -28,7 +27,8 @@ public class MusicPlayerActivity extends AppCompatActivity {
     SeekBar volumeBar;
     MediaPlayer mp;
     int totalTime;
-
+    int currentTime;
+    TextView songTxt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,54 +36,57 @@ public class MusicPlayerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.player);
+        getSupportActionBar().hide();
+
 
         playBtn = (Button) findViewById(R.id.playBtn);
         elapsedTimeLabel = (TextView) findViewById(R.id.elapsedTimeLabel);
         remainingTimeLabel = (TextView) findViewById(R.id.remainingTimeLabel);
+        songTxt = findViewById(R.id.songText);
 
         Bundle b = getIntent().getExtras();
         if(b != null) {
             artist_song = b.getString(ARTIST_SONG);
         }
+        songTxt.setText(artist_song);
 
-        getSupportActionBar().setTitle(artist_song);
+//        MyTask asyncTask = new MyTask(MusicPlayerActivity.this);
+//        asyncTask.execute(artist_song);
 
-        MyTask asyncTask = new MyTask(MusicPlayerActivity.this);
-        asyncTask.execute(artist_song);
+        currentTime=0;
 
         //player
-        mp = MediaPlayer.create(this, R.raw.revelations);
+        mp = MediaPlayer.create(this, R.raw.lol);
         mp.setLooping(true);
-//        mp.seekTo(0);
-//        mp.setVolume(0.5f, 0.5f);
+        mp.seekTo(0);
         totalTime = mp.getDuration();
         mp.start();
 
 
         // Position Bar
-//        positionBar = (SeekBar) findViewById(R.id.positionBar);
-//        positionBar.setMax(totalTime);
-//        positionBar.setOnSeekBarChangeListener(
-//                new SeekBar.OnSeekBarChangeListener() {
-//                    @Override
-//                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-//                        if (fromUser) {
-//                            mp.seekTo(progress);
-//                            positionBar.setProgress(progress);
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onStartTrackingTouch(SeekBar seekBar) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onStopTrackingTouch(SeekBar seekBar) {
-//
-//                    }
-//                }
-//        );
+        positionBar = findViewById(R.id.positionBar);
+        positionBar.setMax(totalTime);
+        positionBar.setOnSeekBarChangeListener(
+                new SeekBar.OnSeekBarChangeListener() {
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        if (fromUser) {
+                            mp.seekTo(progress);
+                            positionBar.setProgress(progress);
+                        }
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+
+                    }
+                }
+        );
 
 
         // Volume Bar
@@ -108,7 +111,7 @@ public class MusicPlayerActivity extends AppCompatActivity {
 //                }
 //        );
 
-        // Thread (Update positionBar & timeLabel)
+//         Thread (Update positionBar & timeLabel)
 //        new Thread(new Runnable() {
 //            @Override
 //            public void run() {
@@ -203,19 +206,41 @@ public class MusicPlayerActivity extends AppCompatActivity {
 //
 //        return timeLabel;
 //    }
+
+    public void playBtnClick(View view) {
+
+        if (!mp.isPlaying()) {
+            // Stopping
+            mp.start();
+            playBtn.setBackgroundResource(R.drawable.stop);
+
+        } else {
+            // Playing
+            mp.pause();
+            playBtn.setBackgroundResource(R.drawable.play);
+        }
+
+    }
+
+//TODO:Valta otan teleiwseis gia na stamataei otan pas pisw h otan vganeis gia ligo apo thn efarmogh
+
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        mp.pause();
+//        currentTime=mp.getCurrentPosition();
+//    }
 //
-//    public void playBtnClick(View view) {
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        mp.seekTo(currentTime);
+//        mp.start();
+//    }
 //
-//        if (!mp.isPlaying()) {
-//            // Stopping
-//            mp.start();
-//            playBtn.setBackgroundResource(R.drawable.stop);
-//
-//        } else {
-//            // Playing
-//            mp.pause();
-//            playBtn.setBackgroundResource(R.drawable.play);
-//        }
-//
+//    @Override
+//    public void onBackPressed() {
+//        super.onDestroy();
+//        mp.stop();
 //    }
 }

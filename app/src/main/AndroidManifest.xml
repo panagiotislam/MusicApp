@@ -13,7 +13,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".impl.MusicPlayerActivity"></activity>
+        <activity android:name=".MusicPlayerActivity"></activity>
         <activity android:name=".SongsActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>

@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
         artistNames.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                artistNames.setClickable(false);
                 String artist_name = ((TextView) view.findViewById(R.id.lines)).getText().toString();
                 songText.setText("Select song.");
                 Intent intent = new Intent(MainActivity.this,SongsActivity.class);
@@ -69,6 +70,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        artistNames.setClickable(true);
+    }
 
 
 }
