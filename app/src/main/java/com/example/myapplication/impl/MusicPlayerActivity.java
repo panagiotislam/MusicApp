@@ -59,6 +59,7 @@ public class MusicPlayerActivity extends AppCompatActivity {
         totalTime = mp.getDuration();
         mp.start();
 
+
         // Position Bar
 //        positionBar = (SeekBar) findViewById(R.id.positionBar);
 //        positionBar.setMax(totalTime);
