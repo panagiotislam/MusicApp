@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     final String ARTIST_NAME = "artist_name";
     TextView songText;
     ListView artistNames;
-    List<String> names = Arrays.asList("Alexander Nakarada", "Anonymous for Good Reasons", "Arthur Fordsworthy", "Brett Van Donsel", "Brian Boyko", "dogsounds", "James Anderson",
+    List<String> names = Arrays.asList("Alexander Nakarada", "Anonymous for Good Reasons", "Arthur Fordsworthy", "Brett VanDonsel", "Brian Boyko", "dogsounds", "James Anderson",
             "Jason Shaw", "Kevin MacLeod", "Komiku", "Orchestralis", "Phase Shift", "Rafael Krux", "Severed Personality", "statusq", "Train Robbin' Scoundrels", "Unknown");
 
 
@@ -55,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 
-        songText.setText("LOL");
 
         artistNames.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
