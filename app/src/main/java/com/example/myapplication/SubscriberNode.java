@@ -114,9 +114,8 @@ public class SubscriberNode {
         try {
             return consumedMessages.get(0);
         } catch (NullPointerException n) {
-            n.printStackTrace();
+            return new Value();
         }
-        return consumedMessages.get(0);
     }
 }
 

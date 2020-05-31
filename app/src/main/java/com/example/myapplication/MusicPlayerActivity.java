@@ -7,7 +7,9 @@ import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
@@ -15,6 +17,11 @@ import android.widget.TextView;
 
 import com.example.myapplication.impl.Hash;
 import com.example.myapplication.impl.Value;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class MusicPlayerActivity extends AppCompatActivity {
 
@@ -50,17 +57,17 @@ public class MusicPlayerActivity extends AppCompatActivity {
         }
         songTxt.setText(artist_song);
 
-//        MyTask asyncTask = new MyTask(MusicPlayerActivity.this);
-//        asyncTask.execute(artist_song);
+        MyTask asyncTask = new MyTask(MusicPlayerActivity.this);
+        asyncTask.execute(artist_song);
 
         currentTime=0;
 
         //player
-        mp = MediaPlayer.create(this, R.raw.lol);
-        mp.setLooping(true);
-        mp.seekTo(0);
-        totalTime = mp.getDuration();
-        mp.start();
+//        mp = MediaPlayer.create(this, R.raw.tick_tock);
+//        mp.setLooping(true);
+//        mp.seekTo(0);
+//        totalTime = mp.getDuration();
+//        mp.start();
 
 
         // Position Bar
@@ -134,7 +141,9 @@ public class MusicPlayerActivity extends AppCompatActivity {
 
         private final static String BROKER_IP = "10.0.2.2";
         private final static int SUB_ID = 1;
+        private MediaPlayer mediaPlayer = new MediaPlayer();
         ProgressDialog progressDialog ;
+
 
         public MyTask(MusicPlayerActivity activity) {
             progressDialog = new ProgressDialog(activity);
@@ -174,8 +183,40 @@ public class MusicPlayerActivity extends AppCompatActivity {
             if (progressDialog.isShowing()) {
                 progressDialog.dismiss();
             }
+            String p = result.getMusicFile().getMusicFileExtract();
+            playMp3(Base64.decode(p, 0));
             // Do things like hide the progress bar or change a TextView
         }
+
+        private void playMp3(byte[] mp3SoundByteArray) {
+            try {
+// create temp file that will hold byte array
+                File tempMp3 = File.createTempFile("kurchina", "mp3", getCacheDir());
+                tempMp3.deleteOnExit();
+                FileOutputStream fos = new FileOutputStream(tempMp3);
+                fos.write(mp3SoundByteArray);
+                fos.close();
+
+// resetting mediaplayer instance to evade problems
+                mediaPlayer.reset();
+
+// In case you run into issues with threading consider new instance like:
+// MediaPlayer mediaPlayer = new MediaPlayer();
+
+// Tried passing path directly, but kept getting
+// "Prepare failed.: status=0x1"
+// so using file descriptor instead
+                FileInputStream fis = new FileInputStream(tempMp3);
+                mediaPlayer.setDataSource(fis.getFD());
+
+                mediaPlayer.prepare();
+                mediaPlayer.start();
+            } catch (IOException ex) {
+                String s = ex.toString();
+                ex.printStackTrace();
+            }
+        }
+
     }
 
 //    private Handler handler = new Handler() {
@@ -207,20 +248,20 @@ public class MusicPlayerActivity extends AppCompatActivity {
 //        return timeLabel;
 //    }
 
-    public void playBtnClick(View view) {
-
-        if (!mp.isPlaying()) {
-            // Stopping
-            mp.start();
-            playBtn.setBackgroundResource(R.drawable.stop);
-
-        } else {
-            // Playing
-            mp.pause();
-            playBtn.setBackgroundResource(R.drawable.play);
-        }
-
-    }
+//    public void playBtnClick(View view) {
+//
+//        if (!mp.isPlaying()) {
+//            // Stopping
+//            mp.start();
+//            playBtn.setBackgroundResource(R.drawable.stop);
+//
+//        } else {
+//            // Playing
+//            mp.pause();
+//            playBtn.setBackgroundResource(R.drawable.play);
+//        }
+//
+//    }
 
 //TODO:Valta otan teleiwseis gia na stamataei otan pas pisw h otan vganeis gia ligo apo thn efarmogh
 

@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.example.myapplication.impl.MusicPlayerActivity;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;

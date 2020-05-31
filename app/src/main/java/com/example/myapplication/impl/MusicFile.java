@@ -1,12 +1,8 @@
 package com.example.myapplication.impl;
 import android.os.Build;
-
 import androidx.annotation.RequiresApi;
-
 import com.mpatric.mp3agic.*;
-
 import java.io.*;
-
 import java.util.Base64;
 
 
