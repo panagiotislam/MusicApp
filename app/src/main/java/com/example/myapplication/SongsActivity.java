@@ -1,13 +1,12 @@
 package com.example.myapplication;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-
+import com.example.myapplication.impl.MusicPlayerActivity;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -43,10 +42,7 @@ public class SongsActivity extends AppCompatActivity {
 
         artistSongs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                artistSongs.setClickable(false);
                 String artist_song = ((TextView) view.findViewById(R.id.lines)).getText().toString();
-//                MyTask asyncTask = new MyTask(SongsActivity.this);
-//                asyncTask.execute(artist_name+"-"+artist_song);
                 Intent intent = new Intent(SongsActivity.this, MusicPlayerActivity.class);
                 Bundle b = new Bundle();
                 b.putString(ARTIST_SONG, artist_name+"-"+artist_song);
@@ -121,12 +117,6 @@ public class SongsActivity extends AppCompatActivity {
         song = new ArrayList<>(Arrays.asList("Coy Koi"));
         songs.put("Unknown",song);
 
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        artistSongs.setClickable(true);
     }
 }
 

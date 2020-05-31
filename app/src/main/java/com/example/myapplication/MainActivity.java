@@ -1,23 +1,11 @@
 package com.example.myapplication;
-
-import com.example.myapplication.Adapter;
-import com.example.myapplication.R;
-import com.example.myapplication.SubscriberNode;
-import com.example.myapplication.impl.*;
-
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,19 +30,6 @@ public class MainActivity extends AppCompatActivity {
 
         Adapter myadapter = new Adapter(this, names);
         artistNames.setAdapter(myadapter);
-
-
-//        requestButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                songText.setText("Please enter song name.");
-//                requestButton.setText("Kevin MacLeod-Pickled Pink");
-//                MyTask asyncTask = new MyTask();
-//                asyncTask.execute("Kevin MacLeod-Pickled Pink");
-//
-//            }
-//        });
-
 
         artistNames.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
