@@ -50,12 +50,12 @@ public class MusicPlayerActivity extends AppCompatActivity {
         elapsedTimeLabel = (TextView) findViewById(R.id.elapsedTimeLabel);
         remainingTimeLabel = (TextView) findViewById(R.id.remainingTimeLabel);
         songTxt = findViewById(R.id.songText);
+        positionBar = findViewById(R.id.positionBar);
 
         Bundle b = getIntent().getExtras();
         if(b != null) {
             artist_song = b.getString(ARTIST_SONG);
         }
-        songTxt.setText(artist_song);
 
         MyTask asyncTask = new MyTask(MusicPlayerActivity.this);
         asyncTask.execute(artist_song);
@@ -71,7 +71,6 @@ public class MusicPlayerActivity extends AppCompatActivity {
 
 
         // Position Bar
-        positionBar = findViewById(R.id.positionBar);
         positionBar.setMax(totalTime);
         positionBar.setOnSeekBarChangeListener(
                 new SeekBar.OnSeekBarChangeListener() {
@@ -143,10 +142,11 @@ public class MusicPlayerActivity extends AppCompatActivity {
         private final static int SUB_ID = 1;
         private MediaPlayer mediaPlayer = new MediaPlayer();
         ProgressDialog progressDialog ;
+        MusicPlayerActivity musicPlayerActivity;
 
-
-        public MyTask(MusicPlayerActivity activity) {
-            progressDialog = new ProgressDialog(activity);
+        public MyTask(MusicPlayerActivity musicPlayerActivity) {
+            this.musicPlayerActivity=musicPlayerActivity;
+            progressDialog = new ProgressDialog(musicPlayerActivity);
         }
         @Override
         protected void onPreExecute() {
@@ -183,6 +183,7 @@ public class MusicPlayerActivity extends AppCompatActivity {
             if (progressDialog.isShowing()) {
                 progressDialog.dismiss();
             }
+            songTxt.setText(result.getMusicFile().getAlbumInfo()+"|" +result.getMusicFile().getArtistName()+"|"+result.getMusicFile().getGenre());
             String p = result.getMusicFile().getMusicFileExtract();
             playMp3(Base64.decode(p, 0));
             // Do things like hide the progress bar or change a TextView
@@ -248,40 +249,43 @@ public class MusicPlayerActivity extends AppCompatActivity {
 //        return timeLabel;
 //    }
 
-//    public void playBtnClick(View view) {
-//
-//        if (!mp.isPlaying()) {
-//            // Stopping
-//            mp.start();
-//            playBtn.setBackgroundResource(R.drawable.stop);
-//
-//        } else {
-//            // Playing
-//            mp.pause();
-//            playBtn.setBackgroundResource(R.drawable.play);
-//        }
-//
-//    }
+    public void playBtnClick(View view) {
 
-//TODO:Valta otan teleiwseis gia na stamataei otan pas pisw h otan vganeis gia ligo apo thn efarmogh
+        if (!mp.isPlaying()) {
+            // Stopping
+            mp.start();
+            playBtn.setBackgroundResource(R.drawable.stop);
 
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        mp.pause();
-//        currentTime=mp.getCurrentPosition();
-//    }
-//
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        mp.seekTo(currentTime);
-//        mp.start();
-//    }
-//
-//    @Override
-//    public void onBackPressed() {
-//        super.onDestroy();
-//        mp.stop();
-//    }
+        } else {
+            // Playing
+            mp.pause();
+            playBtn.setBackgroundResource(R.drawable.play);
+        }
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(mp!=null){
+            mp.pause();
+            currentTime=mp.getCurrentPosition();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(mp!=null){
+            mp.seekTo(currentTime);
+            mp.start();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(mp!=null) {
+            mp.stop();
+        }
+    }
 }
