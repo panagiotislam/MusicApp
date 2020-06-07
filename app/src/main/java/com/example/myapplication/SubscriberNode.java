@@ -89,7 +89,7 @@ public class SubscriberNode {
                     e.printStackTrace();
                 }
             }
-            System.out.println("[Subscriber " + subscriberId + "] Finished Consuming messages for topic: '" + input + "'.");
+            System.out.println("[Subscriber " + subscriberId + "] Finished receiving messages for song: '" + input + "'.");
         } catch (IOException e) {
             e.printStackTrace();
         }

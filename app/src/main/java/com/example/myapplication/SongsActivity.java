@@ -58,9 +58,9 @@ public class SongsActivity extends AppCompatActivity {
         songsMap =new HashMap<>();
         ArrayList<String> song = new ArrayList<String>(
                 Arrays.asList("Ambient Bongos", "Apex", "Be Chillin", "Be Jammin", "Blacksmith", "Bonfire", "Brothers Unite",
-                        "Burt's Requiem", "Celebration", "Chronos", "Consecrated Ground", "Construction", "Creepy Hallow", "Favorite", "Fireworks", "Foam Rubber",
+                        "Celebration", "Chronos", "Consecrated Ground", "Construction", "Creepy Hallow", "Favorite", "Fireworks", "Foam Rubber",
                         "Hippety Hop", "Hor Hor", "Horizon Flare", "Journey of Hope", "Jökull (Metal Version)", "Le Baguette","Marked","Nightmare","Nomadic Sunset",
-                        "Novus Initium", "Putin's Lullaby", "Silent Night (Unholy Night)", "Silly Intro", "The Crown", "The Lagoon", "The Story", "Uberpunch"));
+                        "Novus Initium", "Silent Night (Unholy Night)", "Silly Intro", "The Crown", "The Lagoon", "The Story", "Uberpunch"));
         songsMap.put("Alexander Nakarada",song);
 
         song = new ArrayList<>(Arrays.asList("null"));
@@ -72,24 +72,24 @@ public class SongsActivity extends AppCompatActivity {
         song = new ArrayList<>(Arrays.asList("Quick Metal Riff 1"));
         songsMap.put("Brett VanDonsel",song);
 
-        song = new ArrayList<>(Arrays.asList("null","Groovin"));
+        song = new ArrayList<>(Arrays.asList("Groovin"));
         songsMap.put("Brian Boyko",song);
 
-        song = new ArrayList<>(Arrays.asList("A Waltz For Naseem", "Brandenburg Concerto III, Alle", "Brandenburg Concerto III, Allegro II"));
+        song = new ArrayList<>(Arrays.asList("A Waltz For Naseem"));
         songsMap.put("dogsounds",song);
 
         song = new ArrayList<>(Arrays.asList("Goldcrest"));
         songsMap.put("James Anderson",song);
 
-        song = new ArrayList<>(Arrays.asList("Landra's Dream", "River Meditation"));
+        song = new ArrayList<>(Arrays.asList("River Meditation"));
         songsMap.put("Jason Shaw",song);
 
-        song = new ArrayList<>(Arrays.asList("", "A Surprising Encounter", "Alternative Clock Dimension", "Amazing Grace", "Backbeat", "Baltic Levity", "Beat One",
+        song = new ArrayList<>(Arrays.asList("A Surprising Encounter", "Alternative Clock Dimension", "Amazing Grace", "Backbeat", "Baltic Levity", "Beat One",
                 "Bit Bit Loop", "Bollywood Groove", "Breaking Bollywood", "City Sunshine", "Connecting Rainbows", "Dancing at the Inn", "Dark Hallway", "Driving Concern",
-                "Drunken Party", "Evil Incoming", "Fenster's Explanation", "Forest Frolic Loop", "Funky Energy Loop", "Funshine", "Goodnightmare", "Horns", "Icicles Melting",
-                "Improved Ice Cream Track", "Infinite Peace", "Infinite Wonder", "Joey's Song", "Lukewarm Banjo","Meditating Beat", "Midnight in the Green House",
+                "Drunken Party", "Evil Incoming", "Forest Frolic Loop", "Funky Energy Loop", "Funshine", "Goodnightmare", "Horns", "Icicles Melting",
+               "Infinite Peace", "Infinite Wonder", "Lukewarm Banjo","Meditating Beat", "Midnight in the Green House",
                 "Night in the Castle", "Organ Filler", "Painful Disorientation", "Painting Room", "Pickled Pink", "Sad Drunken Party", "Satin Danger", "The Britons"
-                , "Village Tarantella", "Windy Old Weather", "Wisdom in the Sun", "Witch Waltx","null"));
+                , "Village Tarantella", "Windy Old Weather", "Wisdom in the Sun","null"));
         songsMap.put("Kevin MacLeod",song);
 
         song = new ArrayList<>(Arrays.asList("A good bass for gambling", "Bleu", "Champ de tournesol", "La Citadelle"));
@@ -102,8 +102,8 @@ public class SongsActivity extends AppCompatActivity {
         songsMap.put("Phase Shift",song);
 
         song = new ArrayList<>(Arrays.asList("After the End", "Asking Questions", "Barnville", "Beginning of Conflict", "Dreams of Vain", "Eye of Forgiveness", "Final Step",
-                "Ghost Town 2", "Hidden Truth", "Hopeful", "Llama in Pajama", "Madness of Linda", "Magic in the Garden", "One Step Closer", "Silly Boy", "Stereotype News2",
-                "The Celebrated Minuet", "The Drama", "The Land of the Dead", "The Range"));
+                "Ghost Town 2", "Hidden Truth", "Hopeful", "Llama in Pajama", "Madness of Linda", "Magic in the Garden", "One Step Closer", "Silly Boy", "The Celebrated Minuet",
+                "The Land of the Dead", "The Range"));
         songsMap.put("Rafael Krux",song);
 
         song = new ArrayList<>(Arrays.asList("Abstract Anxiety"));

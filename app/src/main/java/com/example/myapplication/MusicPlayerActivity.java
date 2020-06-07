@@ -4,6 +4,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.media.MediaPlayer;
+import android.net.sip.SipSession;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -212,6 +213,12 @@ public class MusicPlayerActivity extends AppCompatActivity {
 
                 mediaPlayer.prepare();
                 mediaPlayer.start();
+                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        mediaPlayer.release();
+                    }
+                });
             } catch (IOException ex) {
                 String s = ex.toString();
                 ex.printStackTrace();
@@ -250,7 +257,6 @@ public class MusicPlayerActivity extends AppCompatActivity {
 //    }
 
     public void playBtnClick(View view) {
-
         if (!mp.isPlaying()) {
             // Stopping
             mp.start();
@@ -284,8 +290,11 @@ public class MusicPlayerActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         if(mp!=null) {
             mp.stop();
+            mp.release();
         }
+
     }
 }
