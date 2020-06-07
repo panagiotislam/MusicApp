@@ -4,16 +4,12 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.media.MediaPlayer;
-import android.net.sip.SipSession;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.myapplication.impl.Hash;
@@ -23,20 +19,23 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MusicPlayerActivity extends AppCompatActivity {
 
     final String ARTIST_SONG = "artist_song";
     Button playBtn;
     TextView elapsedTimeLabel;
-    TextView remainingTimeLabel;
+
     String artist_song;
-    SeekBar positionBar;
-    SeekBar volumeBar;
-    MediaPlayer mp;
-    int totalTime;
+    MediaPlayer mediaPlayer;
+    Timer T;
     int currentTime;
     TextView songTxt;
+    int min;
+    int sec;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +48,9 @@ public class MusicPlayerActivity extends AppCompatActivity {
 
         playBtn = (Button) findViewById(R.id.playBtn);
         elapsedTimeLabel = (TextView) findViewById(R.id.elapsedTimeLabel);
-        remainingTimeLabel = (TextView) findViewById(R.id.remainingTimeLabel);
+//        remainingTimeLabel = (TextView) findViewById(R.id.remainingTimeLabel);
         songTxt = findViewById(R.id.songText);
-        positionBar = findViewById(R.id.positionBar);
+//        positionBar = findViewById(R.id.positionBar);
 
         Bundle b = getIntent().getExtras();
         if(b != null) {
@@ -63,87 +62,22 @@ public class MusicPlayerActivity extends AppCompatActivity {
 
         currentTime=0;
 
-        //player
-//        mp = MediaPlayer.create(this, R.raw.tick_tock);
-//        mp.setLooping(true);
-//        mp.seekTo(0);
-//        totalTime = mp.getDuration();
-//        mp.start();
 
-
-        // Position Bar
-        positionBar.setMax(totalTime);
-        positionBar.setOnSeekBarChangeListener(
-                new SeekBar.OnSeekBarChangeListener() {
-                    @Override
-                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                        if (fromUser) {
-                            mp.seekTo(progress);
-                            positionBar.setProgress(progress);
-                        }
-                    }
-
-                    @Override
-                    public void onStartTrackingTouch(SeekBar seekBar) {
-
-                    }
-
-                    @Override
-                    public void onStopTrackingTouch(SeekBar seekBar) {
-
-                    }
-                }
-        );
-
-
-        // Volume Bar
-//        volumeBar = (SeekBar) findViewById(R.id.volumeBar);
-//        volumeBar.setOnSeekBarChangeListener(
-//                new SeekBar.OnSeekBarChangeListener() {
-//                    @Override
-//                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-//                        float volumeNum = progress / 100f;
-//                        mp.setVolume(volumeNum, volumeNum);
-//                    }
-//
-//                    @Override
-//                    public void onStartTrackingTouch(SeekBar seekBar) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onStopTrackingTouch(SeekBar seekBar) {
-//
-//                    }
-//                }
-//        );
-
-//         Thread (Update positionBar & timeLabel)
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                while (mp != null) {
-//                    try {
-//                        Message msg = new Message();
-//                        msg.what = mp.getCurrentPosition();
-//                        handler.sendMessage(msg);
-//                        Thread.sleep(1000);
-//                    } catch (InterruptedException e) {}
-//                }
-//            }
-//        }).start();
 
 
 
     }
 
-    private class MyTask extends AsyncTask<String, Integer, Value> {
+    private class MyTask extends AsyncTask<String, Integer, List<Value>> {
 
         private final static String BROKER_IP = "10.0.2.2";
         private final static int SUB_ID = 1;
-        private MediaPlayer mediaPlayer = new MediaPlayer();
         ProgressDialog progressDialog ;
         MusicPlayerActivity musicPlayerActivity;
+        String songInfo;
+        int currentChunk=0;
+        int countMin = 0;
+        int countSec =0;
 
         public MyTask(MusicPlayerActivity musicPlayerActivity) {
             this.musicPlayerActivity=musicPlayerActivity;
@@ -159,14 +93,15 @@ public class MusicPlayerActivity extends AppCompatActivity {
         // This is run in a background thread
         @RequiresApi(api = Build.VERSION_CODES.O)
         @Override
-        protected Value doInBackground(String... params) {
+        protected List<Value> doInBackground(String... params) {
 
             String input = params[0];
 
             SubscriberNode subscriberNode = new SubscriberNode(SUB_ID, input, BROKER_IP, 7999 + Hash.getBroker(input.split("-")[0]));
             subscriberNode.connect();
 
-            return subscriberNode.getV();
+            songInfo =subscriberNode.getV().getMusicFile().getTrackName()+"|"+subscriberNode.getV().getMusicFile().getAlbumInfo()+"|" +subscriberNode.getV().getMusicFile().getArtistName()+"|"+subscriberNode.getV().getMusicFile().getGenre();
+            return subscriberNode.getConsumedMessages();
         }
 
         // This is called from background thread but runs in UI
@@ -179,92 +114,124 @@ public class MusicPlayerActivity extends AppCompatActivity {
 
         // This runs in UI when background thread finishes
         @Override
-        protected void onPostExecute(Value result) {
+        protected void onPostExecute(final List<Value> result) {
             super.onPostExecute(result);
             if (progressDialog.isShowing()) {
                 progressDialog.dismiss();
             }
-            songTxt.setText(result.getMusicFile().getAlbumInfo()+"|" +result.getMusicFile().getArtistName()+"|"+result.getMusicFile().getGenre());
-            String p = result.getMusicFile().getMusicFileExtract();
-            playMp3(Base64.decode(p, 0));
-            // Do things like hide the progress bar or change a TextView
+            songTxt.setText(songInfo);
+            final int countChunks=result.size();
+            if(countChunks>0){
+                playMp3(Base64.decode(result.get(currentChunk).getMusicFile().getMusicFileExtract(), 0));
+                currentChunk++;
+            }
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    if (currentChunk<countChunks) {
+                        mediaPlayer.release();
+                        playMp3(Base64.decode(result.get(currentChunk).getMusicFile().getMusicFileExtract(), 0));
+                        currentChunk++;
+                    }
+                    if (currentChunk>=countChunks){
+                        playBtn.setBackgroundResource(R.drawable.play);
+                        T.cancel();
+                        setTime(countMin,countSec);
+                    }
+                }
+            });
+
+
+
+            T=new Timer();
+            T.scheduleAtFixedRate(new TimerTask() {
+                int countMin = 0;
+                int countSec =0;
+                @Override
+                public void run() {
+                    runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            saveTime(countMin, countSec);
+                            if (countSec<10) elapsedTimeLabel.setText(countMin+":0"+countSec);
+                            else elapsedTimeLabel.setText(countMin+":"+countSec);
+                            if (countSec<59) {
+                                countSec++;
+                            } else {
+                                countMin++;
+                                countSec=0;
+                            }
+                        }
+                    });
+                }
+            }, 10, 1000);
+
         }
 
         private void playMp3(byte[] mp3SoundByteArray) {
             try {
-// create temp file that will hold byte array
+                mediaPlayer = new MediaPlayer();
                 File tempMp3 = File.createTempFile("kurchina", "mp3", getCacheDir());
                 tempMp3.deleteOnExit();
                 FileOutputStream fos = new FileOutputStream(tempMp3);
                 fos.write(mp3SoundByteArray);
                 fos.close();
 
-// resetting mediaplayer instance to evade problems
                 mediaPlayer.reset();
 
-// In case you run into issues with threading consider new instance like:
-// MediaPlayer mediaPlayer = new MediaPlayer();
-
-// Tried passing path directly, but kept getting
-// "Prepare failed.: status=0x1"
-// so using file descriptor instead
                 FileInputStream fis = new FileInputStream(tempMp3);
                 mediaPlayer.setDataSource(fis.getFD());
 
                 mediaPlayer.prepare();
                 mediaPlayer.start();
-                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                        mediaPlayer.release();
-                    }
-                });
             } catch (IOException ex) {
                 String s = ex.toString();
                 ex.printStackTrace();
             }
         }
 
+
+
     }
 
-//    private Handler handler = new Handler() {
-//
-//        @Override
-//        public void handleMessage(Message msg) {
-//            int currentPosition = msg.what;
-//            // Update positionBar.
-//            positionBar.setProgress(currentPosition);
-//
-//            // Update Labels.
-//            String elapsedTime = createTimeLabel(currentPosition);
-//            elapsedTimeLabel.setText(elapsedTime);
-//
-//            String remainingTime = createTimeLabel(totalTime-currentPosition);
-//            remainingTimeLabel.setText("- " + remainingTime);
-//        }
-//    };
-//
-//    public String createTimeLabel(int time) {
-//        String timeLabel = "";
-//        int min = time / 1000 / 60;
-//        int sec = time / 1000 % 60;
-//
-//        timeLabel = min + ":";
-//        if (sec < 10) timeLabel += "0";
-//        timeLabel += sec;
-//
-//        return timeLabel;
-//    }
 
-    public void playBtnClick(View view) {
-        if (!mp.isPlaying()) {
+    public void playBtnClick(View view) throws InterruptedException {
+        if (!mediaPlayer.isPlaying()) {
             // Stopping
-            mp.start();
+            mediaPlayer.start();
+            T= new Timer();
+            T.scheduleAtFixedRate(new TimerTask() {
+                int countMin = min;
+                int countSec = sec;
+                @Override
+                public void run() {
+                    runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            saveTime(countMin, countSec);
+                            if (countSec<10) elapsedTimeLabel.setText(countMin+":0"+countSec);
+                            else elapsedTimeLabel.setText(countMin+":"+countSec);
+                            if (countSec<59) {
+                                countSec++;
+                            } else {
+                                countMin++;
+                                countSec=0;
+                            }
+                        }
+                    });
+                }
+            }, 10, 1000);
             playBtn.setBackgroundResource(R.drawable.stop);
+
 
         } else {
             // Playing
-            mp.pause();
+            mediaPlayer.pause();
+            T.cancel();
             playBtn.setBackgroundResource(R.drawable.play);
         }
     }
@@ -273,28 +240,28 @@ public class MusicPlayerActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if(mp!=null){
-            mp.pause();
-            currentTime=mp.getCurrentPosition();
+        if(mediaPlayer!=null&&mediaPlayer.isPlaying()){
+            mediaPlayer.pause();
+            currentTime=mediaPlayer.getCurrentPosition();
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if(mp!=null){
-            mp.seekTo(currentTime);
-            mp.start();
+        if(mediaPlayer!=null){
+            mediaPlayer.seekTo(currentTime);
+            mediaPlayer.start();
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        if(mp!=null) {
-            mp.stop();
-            mp.release();
-        }
+    private void saveTime(int countMin, int countSec){
+        min = countMin;
+        sec = countSec;
+    }
 
+    private void setTime(int countMin, int countSec){
+        min = 0;
+        sec = 0;
     }
 }

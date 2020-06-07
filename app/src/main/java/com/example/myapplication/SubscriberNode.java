@@ -118,7 +118,9 @@ public class SubscriberNode {
         }
     }
 
-
+    public List<Value> getConsumedMessages() {
+        return consumedMessages;
+    }
 }
 
 
